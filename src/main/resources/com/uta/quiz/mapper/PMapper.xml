@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口的全类名-->
+<mapper namespace="com.uta.quiz.mapper.PMapper">
+    <select id="getAll" resultType="map">
+        select * from p
+    </select>
+
+    <!--
+        List<Map<String, Object>> selectByColor(@Param("color") String color);
+    -->
+    <select id="selectByColor" resultType="map">
+        select x,y from p where color = #{color}
+    </select>
+
+    <select id="getById" resultType="map">
+        select * from p where id = #{id}
+    </select>
+
+    <update id="updateById">
+        update p set x = #{x}, y = #{y}, color = #{color} where id = #{id}
+    </update>
+
+    <insert id="add">
+        insert into p(x,y,color) values(#{x},#{y},#{color})
+    </insert>
+</mapper>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Question 10</title>
+        <!--引入bootstrap和jquery-->
+        <link rel="stylesheet" th:href="@{/static/bootstrap-3.4.1-dist/css/bootstrap.min.css}">
+        <script th:src="@{/static/js/jquery-3.6.1.min.js}"></script>
+        <script th:src="@{/static/bootstrap-3.4.1-dist/js/bootstrap.min.js}"></script>
+        <script th:src="@{/static/js/echarts.min.js}"></script>
+    </head>
+    <body>
+    <!--引入公共部分，即姓名和学号-->
+    <div align="center" th:insert="base::header" style="margin-bottom: 10px;color:rebeccapurple"></div>
+    <!-- 选项卡菜单-->
+    <nav class="navbar navbar-dark bg-success" role="navigation" >
+        <div class="container-fluid">
+            <ul class="nav navbar-nav" align="center">
+                <li><a th:href="@{/}"><span class="glyphicon glyphicon-home"></span> My Home</a></li>
+                <li><a th:href="@{/F/question10}"><span class="glyphicon glyphicon-paperclip"></span> Q 10</a></li>
+                <li><a th:href="@{/P/question11}"><span class="glyphicon glyphicon-time"></span> Q 11</a></li>
+                <li><a th:href="@{/F/question12}"><span class="glyphicon glyphicon-map-marker"></span> Q 12</a></li>
+            </ul>
+            <div class="form-inline" align="right" style="margin-top: 10px;">
+                <!--                <label for="latitude">latitude:</label>-->
+                <input type="text" class="form-control" name="latitude" id="min" placeholder="min of range"/>
+                <!--                <label for="longitude">longitude:</label>-->
+                <input type="text" class="form-control" name="longitude" id="max" placeholder="max of range"/>
+                <button type="button" class="btn btn-success" id="btn" value="show"> search</button>
+            </div>
+        </div>
+    </nav>
+<!--        <div style="margin-left: 5px; margin-top: 5px; margin-bottom: 5px;">-->
+<!--            <h3>Please input the range of store:</h3>-->
+<!--            <input type="text" id="min">-->
+<!--            <input type="text" id="max">-->
+<!--            <input type="button" id="btn" value="show">-->
+<!--        </div>-->
+        <div id=myChart align="center" style="width: 80%; height: 650px;"></div>
+    </body>
+    <script th:inline="javascript">
+        $("#btn").click(function () {
+            $.get({
+                url:[[@{/F/question_12}]],
+                data:{"min":$("#min").val(),"max":$("#max").val()},
+                dataType:"json",
+                success:function (data) {
+                    console.log(data);
+                    // question 12
+
+                    var myChart = echarts.init(document.getElementById("myChart"));
+                    var option = {
+                        title: {
+                            text: 'Pie',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                name: 'The sum of food',
+                                type: 'pie',
+                                radius: '50%',
+                                data: data,
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    myChart.setOption(option);
+                }
+            });
+        });
+    </script>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Question 10</title>
+        <!--引入bootstrap和jquery-->
+        <link rel="stylesheet" th:href="@{/static/bootstrap-3.4.1-dist/css/bootstrap.min.css}">
+        <script th:src="@{/static/js/jquery-3.6.1.min.js}"></script>
+        <script th:src="@{/static/bootstrap-3.4.1-dist/js/bootstrap.min.js}"></script>
+        <script th:src="@{/static/js/echarts.min.js}"></script>
+    </head>
+    <body>
+    <!--引入公共部分，即姓名和学号-->
+    <div align="center" th:insert="base::header" style="margin-bottom: 10px;color:rebeccapurple"></div>
+    <!-- 选项卡菜单-->
+    <nav class="navbar navbar-dark bg-success" role="navigation" >
+        <div class="container-fluid">
+            <ul class="nav navbar-nav" align="center">
+                <li><a th:href="@{/}"><span class="glyphicon glyphicon-home"></span> My Home</a></li>
+                <li><a th:href="@{/F/question10}"><span class="glyphicon glyphicon-paperclip"></span> Q 10</a></li>
+                <li><a th:href="@{/P/question11}"><span class="glyphicon glyphicon-time"></span> Q 11</a></li>
+                <li><a th:href="@{/F/question12}"><span class="glyphicon glyphicon-map-marker"></span> Q 12</a></li>
+            </ul>
+                <div class="form-inline" align="right" style="margin-top: 10px;">
+                    <!--                <label for="latitude">latitude:</label>-->
+                    <input type="text" class="form-control" name="latitude" id="min" placeholder="min of range"/>
+                    <!--                <label for="longitude">longitude:</label>-->
+                    <input type="text" class="form-control" name="longitude" id="max" placeholder="max of range"/>
+                    <button type="button" class="btn btn-success" id="btn" value="show"> search</button>
+                </div>
+        </div>
+    </nav>
+<!--        <div style="margin-left: 5px; margin-top: 5px; margin-bottom: 5px;">-->
+<!--            <h3>Please input the range of store:</h3>-->
+<!--            <input type="text" id="min">-->
+<!--            <input type="text" id="max">-->
+<!--            <input type="button" id="btn" value="show">-->
+<!--        </div>-->
+
+        <div id=myChart1  style="width: 80%; height: 650px;align:center"></div>
+        <div id=myChart2  style="width: 80%; height: 650px;align:center"></div>
+    </body>
+    <script th:inline="javascript">
+        $("#btn").click(function () {
+            $.get({
+                url:[[@{/F/question_10}]],
+                data:{"min":$("#min").val(),"max":$("#max").val()},
+                dataType:"json",
+                success:function (data) {
+                    console.log(data);
+                    // question 10 a)
+                    var names0 = [];
+                    var values0 = [];
+                    for (let i = 0; i < data[0].length; i++) {
+                        names0.push(data[0][i].name);
+                        values0.push(data[0][i].value);
+                    }
+
+                    var myChart1 = echarts.init(document.getElementById("myChart1"));
+                    var option0 = {
+                        title: {
+                            text: 'Question 10 a)'
+                        },
+                        legend: {
+                            top:'middle'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: names0
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [
+                            {
+                                name: "The sum of food",
+                                data: values0,
+                                type: 'bar'
+                            }
+                        ]
+                    };
+                    myChart1.setOption(option0);
+                    // question 10 b)
+                    var names1 = [];
+                    var values1 = [];
+                    for (let i = 0; i < data[1].length; i++) {
+                        names1.push(data[1][i].name);
+                        values1.push(data[1][i].value);
+                    }
+
+                    var myChart2 = echarts.init(document.getElementById("myChart2"));
+                    var option1 = {
+                        title: {
+                            text: 'Question 10 b)'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        legend: {
+                            top:'middle'
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            boundaryGap: [0, 0.01]
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: names1
+                        },
+                        series: [
+                            {
+                                name: 'The sum of food',
+                                type: 'bar',
+                                data: values1
+                            }
+                        ]
+                    };
+                    myChart2.setOption(option1);
+                }
+            });
+        });
+    </script>
+</html>

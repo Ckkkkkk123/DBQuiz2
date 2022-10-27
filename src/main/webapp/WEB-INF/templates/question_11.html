@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Question 11</title>
+        <!--引入bootstrap和jquery-->
+        <link rel="stylesheet" th:href="@{/static/bootstrap-3.4.1-dist/css/bootstrap.min.css}">
+        <script th:src="@{/static/js/jquery-3.6.1.min.js}"></script>
+        <script th:src="@{/static/bootstrap-3.4.1-dist/js/bootstrap.min.js}"></script>
+        <script th:src="@{/static/js/echarts.min.js}"></script>
+    </head>
+    <body>
+    <!--引入公共部分，即姓名和学号-->
+    <div align="center" th:insert="base::header" style="margin-bottom: 10px;color:rebeccapurple"></div>
+    <!-- 选项卡菜单-->
+    <nav class="navbar navbar-dark bg-success" role="navigation" >
+        <div class="container-fluid">
+            <ul class="nav navbar-nav" align="center">
+                <li><a th:href="@{/}"><span class="glyphicon glyphicon-home"></span> My Home</a></li>
+                <li><a th:href="@{/F/question10}"><span class="glyphicon glyphicon-paperclip"></span> Q 10</a></li>
+                <li><a th:href="@{/P/question11}"><span class="glyphicon glyphicon-time"></span> Q 11</a></li>
+                <li><a th:href="@{/F/question12}"><span class="glyphicon glyphicon-map-marker"></span> Q 12</a></li>
+            </ul>
+            <form align="right" class="form-inline" style="margin-buttom: 10px;">
+                <div class="form-group">
+                    <button type="button" class="btn btn-warning "id="show_figure" value="Show figure" style="margin-bottom: 5px; margin-left: 5px; margin-top: 5px;" onclick="draw()">Show Chart</button>
+                    <button type="button" class="btn btn-danger" value="add points" onclick="showAddPage()">AddPoints</button>
+                </div>
+            </form>
+        </div>
+    </nav>
+    <div class="container row=6" style="text-align: center;" >
+        <table class="table table-striped" border = 1 rules="all" frame="border">
+            <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">x</th>
+                <th class="text-center">y</th>
+                <th class="text-center">color</th>
+                <th class="text-center">option</th>
+            </tr>
+            <tbody id="tb_content">
+                <tr th:each="map, status : ${all}">
+                    <td th:text="${status.count}"></td>
+                    <td th:text="${map.x}"></td>
+                    <td th:text="${map.y}"></td>
+                    <td th:text="${map.color}"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary" value="update" th:onclick="showUpdate([[${map.id}]])">update</button>
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    </div>
+        <!--
+            更新的输入框
+        -->
+        <div id="update_div">
+        </div>
+        <!--
+            添加的输入框
+        -->
+        <div id="add_div">
+        </div>
+
+        <div id=myChart style="width: 800px; height: 650px;"></div>
+    </body>
+    <script th:inline="javascript">
+        // 添加数据
+        function add() {
+            $.get({
+                url:[[@{/P/add}]],
+                data:{"x":$("#add_x").val(),"y":$("#add_y").val(),"color":$("#add_color").val()},
+                success:function () {
+                    // 刷新页面
+                    flushTable();
+                    // 将添加界面隐藏
+                    $("#add_div").html("");
+                    // 绘图
+                    draw();
+                }
+            });
+        }
+
+        // 显示添加数据页面
+        function showAddPage() {
+            var html = "<center>\n"+"            <table>\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <label for=\"add_x\">x:</label>\n" +
+                "                    </td>\n" +
+                "                    <td>\n" +
+                "                        <input type=\"text\" id=\"add_x\">\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <label for=\"add_y\">y:</label>\n" +
+                "                    </td>\n" +
+                "                    <td>\n" +
+                "                        <input type=\"text\" id=\"add_y\">\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td>\n" +
+                "                        <label for=\"add_color\">color:</label>\n" +
+                "                    </td>\n" +
+                "                    <td>\n" +
+                "                        <input type=\"text\" id=\"add_color\">\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "                <tr>\n" +
+                "                    <td colspan=\"2\">\n" +
+                "                        <input type=\"button\" id=\"add_btn\" value=\"add\" onclick='add()'>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "            </table>" +
+            "</center>";
+            $("#add_div").html(html);
+
+        }
+
+        // 绘图
+        function draw() {
+            $.get({
+                url:[[@{/P/draw}]],
+                dataType:"json",
+                    success:function (data) {
+                    console.log(data);
+                    var dataRed = [];
+                    var dataGreen = [];
+                    var listRed = data.red;
+                    var listGreen = data.green;
+                    for (let i = 0; i < listRed.length; i++) {
+                        var temp = [];
+                        temp.push(listRed[i].x);
+                        temp.push(listRed[i].y);
+                        dataRed.push(temp);
+                    }
+                    for (let i = 0; i < listGreen.length; i++) {
+                        var temp = [];
+                        temp.push(listGreen[i].x);
+                        temp.push(listGreen[i].y);
+                        dataGreen.push(temp);
+                    }
+                    var myChart = echarts.init(document.getElementById("myChart"));
+                    var option =  {
+                        color:["red", 'green'],
+                        xAxis: {},
+                        yAxis: {},
+                        series: [
+                            {
+                                symbolSize: 20,
+                                data:dataRed,
+                                type: 'scatter'
+                            },
+                            {
+                                symbolSize: 20,
+                                data: dataGreen,
+                                type: 'scatter'
+                            }
+                        ]
+                    };
+                    myChart.setOption(option);
+                }
+            });
+        }
+        // 刷新表格
+        function flushTable() {
+            $.get({
+                url:[[@{/P/getAll}]],
+                dataType:"json",
+                success:function (data) {
+                    // 遍历数据，并设置到表格中
+                    var html = "";
+                    for (let i = 0; i < data.length; i++) {
+                        var oneData = data[i];
+                        html += "<tr>" +
+                            "<td>" + (i+1) + "</td>" +
+                            "<td>" + oneData.x + "</td>" +
+                            "<td>" + oneData.y + "</td>" +
+                            "<td>" + oneData.color + "</td>" +
+                            "<td>" + "<input type=\"button\" class=\"btn btn-primary\" value=\"update\" onclick=\"showUpdate("+ oneData.id +")\">" + "</td>" +
+                            "</tr>";
+                    }
+                    // 设置表格
+                    $("#tb_content").html(html);
+                }
+            });
+        }
+
+        // 更新数据
+        function update(id) {
+            $.get({
+                url: [[@{/P/updateById}]],
+                data: {"id":id,"x":$("#x").val(),"y":$("#y").val(),"color":$("#color").val()},
+                success:function () {
+                    // 刷新表格
+                    // 1. 发起请求，查询所有的数据
+                    // 2. 设置表格数据
+                    flushTable();
+                    // 隐藏更新的组件，清空内部的html
+                    $("#update_div").html("");
+                    // 更新图像，给图像设置数据
+                    draw();
+                }
+            });
+        }
+
+        // 展示出更新的输入框，并将数据回显
+        function showUpdate(id) {
+            $.get({
+                url:[[@{/P/getById}]],
+                data:{"id":id},
+                dataType:"json",
+                success:function (data) {
+                    var html = "<center>\n" +
+                        "<h3>Update</h3>\n" +
+                        "            <table>\n" +
+                        "                <tr>\n" +
+                        "                    <td>\n" +
+                        "                        <label for=\"x\">x:</label>\n" +
+                        "                    </td>\n" +
+                        "                    <td>\n" +
+                        "                        <input type=\"text\" id=\"x\"><br>\n" +
+                        "                    </td>\n" +
+                        "                </tr>\n" +
+                        "                <tr>\n" +
+                        "                    <td>\n" +
+                        "                        <label for=\"y\">y:</label>\n" +
+                        "                    </td>\n" +
+                        "                    <td>\n" +
+                        "                        <input type=\"text\" id=\"y\"><br>\n" +
+                        "                    </td>\n" +
+                        "                </tr>\n" +
+                        "                <tr>\n" +
+                        "                    <td>\n" +
+                        "                        <label for=\"color\">color:</label>\n" +
+                        "                    </td>\n" +
+                        "                    <td>\n" +
+                        "                        <input type=\"text\" id=\"color\"><br>\n" +
+                        "                    </td>\n" +
+                        "                </tr>\n" +
+                        "                <tr>\n" +
+                        "                    <td colspan=\"2\">\n" +
+                        "                        <input type=\"button\" value=\"update\" id=\"update_btn\" onclick='update("+ id +")'>\n" +
+                        "                    </td>\n" +
+                        "                </tr>\n" +
+                        "            </table>" +
+                        "</center>"                        ;
+                    $("#update_div").html(html);
+                    $("#x").val(data.x);
+                    $("#y").val(data.y);
+                    $("#color").val(data.color);
+                }
+            });
+        }
+
+
+    </script>
+</html>

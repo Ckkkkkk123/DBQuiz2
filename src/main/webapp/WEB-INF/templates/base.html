@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>base</title>
+        <!--引入bootstrap和jquery-->
+        <link rel="stylesheet" th:href="@{/static/bootstrap-3.4.1-dist/css/bootstrap.min.css}">
+        <script th:src="@{/static/js/jquery-3.6.1.min.js}"></script>
+        <script th:src="@{/static/bootstrap-3.4.1-dist/js/bootstrap.min.js}"></script>
+    </head>
+    <body>
+        <div th:fragment="header">
+            <h2>Jianxiang Wang</h2>
+            <h2>91890</h2>
+        </div>
+    </body>
+</html>

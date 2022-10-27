@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>index</title>
+        <!--引入bootstrap和jquery-->
+        <link rel="stylesheet" th:href="@{/static/bootstrap-3.4.1-dist/css/bootstrap.min.css}">
+        <script th:src="@{/static/js/jquery-3.6.1.min.js}"></script>
+        <script th:src="@{/static/bootstrap-3.4.1-dist/js/bootstrap.min.js}"></script>
+    </head>
+    <body>
+        <!--引入公共部分，即姓名和学号-->
+        <div align="center" th:insert="base::header" style="margin-bottom: 10px;color:rebeccapurple"></div>
+        <!-- 选项卡菜单-->
+        <nav class="navbar navbar-dark bg-success" role="navigation" >
+            <div class="container-fluid">
+                <ul class="nav navbar-nav" align="center">
+                    <li><a th:href="@{/}"><span class="glyphicon glyphicon-home"></span> My Home</a></li>
+                    <li><a th:href="@{/F/question10}"><span class="glyphicon glyphicon-paperclip"></span> Q 10</a></li>
+                    <li><a th:href="@{/P/question11}"><span class="glyphicon glyphicon-time"></span> Q 11</a></li>
+                    <li><a th:href="@{/F/question12}"><span class="glyphicon glyphicon-map-marker"></span> Q 12</a></li>
+                </ul>
+            </div>
+        </nav>
+        <h2 align="center">Welcome to the STORE data query system, which includes the following five functions</h2>
+        <div class="container row=6" style="text-align: center;" >
+            <table class="table table-striped" border = 1 rules="all" frame="border">
+                <tr>
+                    <th class="text-center">Button Name</th>
+                    <th class="text-center">Function Description</th>
+                </tr>
+                <tr>
+                    <td th:href="@{/F/question10}" style="color:cornflowerblue;font-size: larger">Q 10</td>
+                    <td >Funtion of question 10</td>
+                </tr>
+                <tr>
+                    <td th:href="@{/F/question11}" style="color:cornflowerblue;font-size: larger">Q 11</td>
+                    <td >Funtion of question 11</td>
+                </tr>
+                <tr>
+                    <td th:href="@{/F/question12}" style="color:cornflowerblue;font-size: larger">Q 12</td>
+                    <td >Funtion of question 12</td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
